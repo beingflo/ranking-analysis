@@ -1,12 +1,13 @@
-use std::fs;
-use serde_json;
-use util::Match;
+use crate::util::read_matches;
 
 pub mod util;
 
 fn main() {
-    let data = fs::read_to_string("./src/matches.json").expect("File could not be read");
-    let matches: Vec<Match> = serde_json::from_str(&data).expect("Could not serialize data");
+    let matches = read_matches();
+    let filtered = matches
+        .iter()
+        .filter(|m| m.team_a.contains(&"251".to_string()) || m.team_b.contains(&"251".to_string()))
+        .count();
 
-    println!("{}", matches.len());
+    println!("{}", filtered);
 }
