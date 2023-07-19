@@ -9,36 +9,43 @@ pub struct WinRate {
 
 pub struct WinRateRanking {
     pub winrates: HashMap<String, WinRate>,
+    pub winrate_history: HashMap<String, Vec<(String, f32)>>,
 }
 
 pub fn compute_ranking(matches: &Vec<Match>) -> WinRateRanking {
     let mut ranking = WinRateRanking {
         winrates: HashMap::new(),
+        winrate_history: HashMap::new(),
     };
 
     for p in get_players(&matches) {
         ranking.winrates.insert(
-            p,
+            p.clone(),
             WinRate {
                 num_matches: 0,
                 num_wins: 0,
             },
         );
+        ranking.winrate_history.insert(p, Vec::new());
     }
 
     for m in matches.iter() {
-        let [winning_team, losing_team] = if m.team_a_score > m.team_b_score {
-            [&m.team_a, &m.team_b]
+        let all_players = m.team_a.iter().chain(m.team_b.iter());
+        let winning_team = if m.team_a_score > m.team_b_score {
+            &m.team_a
         } else {
-            [&m.team_b, &m.team_a]
+            &m.team_b
         };
 
         for p in winning_team.iter() {
-            ranking.winrates.get_mut(p).unwrap().num_matches += 1;
             ranking.winrates.get_mut(p).unwrap().num_wins += 1;
         }
-        for p in losing_team.iter() {
+        for p in all_players {
             ranking.winrates.get_mut(p).unwrap().num_matches += 1;
+            ranking.winrate_history.get_mut(p).unwrap().push((
+                m.start_date.clone(),
+                ranking.winrates.get(p).unwrap().get_winrate(),
+            ));
         }
     }
 

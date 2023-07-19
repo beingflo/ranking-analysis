@@ -7,5 +7,7 @@ fn main() {
     let matches = read_matches();
     let ranking = compute_ranking(&matches);
 
-    println!("{}", ranking.winrates.get("251").unwrap().get_winrate());
+    for e in ranking.winrate_history.get("251").unwrap() {
+        println!("{{ date: '{}', winrate: {} }},", e.0, e.1);
+    }
 }
