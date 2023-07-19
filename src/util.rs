@@ -1,4 +1,4 @@
-use std::fs;
+use std::{collections::HashSet, fs};
 
 use serde::Deserialize;
 
@@ -35,4 +35,19 @@ pub fn read_matches() -> Vec<Match> {
     let matches: Vec<Match> = serde_json::from_str(&data).expect("Could not serialize data");
 
     matches
+}
+
+pub fn get_players(matches: &Vec<Match>) -> Vec<String> {
+    let mut players: HashSet<String> = HashSet::new();
+
+    for m in matches.iter() {
+        for p in m.team_a.iter() {
+            players.insert(p.into());
+        }
+        for p in m.team_b.iter() {
+            players.insert(p.into());
+        }
+    }
+
+    players.into_iter().collect()
 }
