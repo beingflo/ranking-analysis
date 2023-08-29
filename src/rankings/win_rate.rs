@@ -48,7 +48,7 @@ pub fn compute_winrate_accuracy(matches: &Vec<Match>) -> f32 {
 
         num_matches += 1;
 
-        if winrate_winners > winrate_losers {
+        if winrate_winners >= winrate_losers {
             correct_predictions += 1;
         }
 
