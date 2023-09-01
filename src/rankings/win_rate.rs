@@ -29,7 +29,7 @@ pub fn compute_winrate_accuracy(matches: &Vec<Match>) -> f32 {
         );
     }
 
-    for m in matches.iter() {
+    for (idx, m) in matches.iter().enumerate() {
         let all_players = m.team_a.iter().chain(m.team_b.iter());
         let (winning_team, losing_team) = if m.team_a_score > m.team_b_score {
             (&m.team_a, &m.team_b)
@@ -46,10 +46,12 @@ pub fn compute_winrate_accuracy(matches: &Vec<Match>) -> f32 {
             .map(|p| ranking.winrates.get(p).unwrap().get_winrate())
             .sum();
 
-        num_matches += 1;
+        if idx > matches.len() - 1000 {
+            num_matches += 1;
 
-        if winrate_winners >= winrate_losers {
-            correct_predictions += 1;
+            if winrate_winners >= winrate_losers {
+                correct_predictions += 1;
+            }
         }
 
         for p in winning_team.iter() {

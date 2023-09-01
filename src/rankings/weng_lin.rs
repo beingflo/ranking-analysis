@@ -17,9 +17,7 @@ pub fn compute_weng_lin_accuracy(matches: &Vec<Match>) -> f32 {
         ranking.insert(p.clone(), WengLinRating::new());
     }
 
-    for m in matches.iter() {
-        num_matches += 1;
-
+    for (idx, m) in matches.iter().enumerate() {
         let (probability_a, _probability_b) = expected_score_two_teams(
             &[
                 ranking.get(&m.team_a[0]).unwrap().clone(),
@@ -34,11 +32,15 @@ pub fn compute_weng_lin_accuracy(matches: &Vec<Match>) -> f32 {
 
         let team_a_wins = m.team_a_score > m.team_b_score;
 
-        if probability_a >= 0.5 && team_a_wins {
-            correct_predictions += 1;
-        }
-        if probability_a <= 0.5 && !team_a_wins {
-            correct_predictions += 1;
+        if idx > matches.len() - 1000 {
+            num_matches += 1;
+
+            if probability_a >= 0.5 && team_a_wins {
+                correct_predictions += 1;
+            }
+            if probability_a <= 0.5 && !team_a_wins {
+                correct_predictions += 1;
+            }
         }
 
         let outcome = if team_a_wins {
